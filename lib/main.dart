@@ -44,7 +44,7 @@ class _BusTrackerState extends State<BusTracker> {
                 ),
               ],
             ),
-            actions: <Widget>[
+            actions: [
               PopupMenuButton<String>(
                 onSelected: viewActions,
                 itemBuilder: (BuildContext context) {
