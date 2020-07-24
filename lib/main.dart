@@ -1,7 +1,24 @@
-import 'package:bus_tracker/constants.dart';
+import 'package:bus_tracker/AppStateNotifier.dart';
+import 'package:bus_tracker/History.dart';
+import 'package:bus_tracker/Report.dart';
+import 'package:bus_tracker/Settings.dart';
+import 'package:bus_tracker/SignOut.dart';
+import 'package:bus_tracker/ThemeForApp.dart';
+import 'package:bus_tracker/Track.dart';
+import 'package:bus_tracker/Ways.dart';
+import 'package:bus_tracker/routes/Routes.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-void main() => runApp(BusTracker());
+void main() {
+  runApp(
+    ChangeNotifierProvider<AppStateNotifier>(
+      create: (context) => AppStateNotifier(),
+      child: BusTracker(),
+    ),
+  );
+}
 
 class BusTracker extends StatefulWidget {
   @override
@@ -9,57 +26,26 @@ class BusTracker extends StatefulWidget {
 }
 
 class _BusTrackerState extends State<BusTracker> {
-  void viewActions(String choice) {
-    print('Working');
-  }
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        brightness: Brightness.light,
-        backgroundColor: Colors.white,
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        backgroundColor: Colors.black,
-      ),
-      home: DefaultTabController(
-        length: 3,
-        initialIndex: 0,
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text('Bus Tracker'),
-            backgroundColor: Colors.blueAccent,
-            bottom: TabBar(
-              tabs: [
-                Tab(
-                  text: 'Track',
-                ),
-                Tab(
-                  text: 'History',
-                ),
-                Tab(
-                  text: 'Routes',
-                ),
-              ],
-            ),
-            actions: [
-              PopupMenuButton<String>(
-                onSelected: viewActions,
-                itemBuilder: (BuildContext context) {
-                  return Constants.choices.map((String choice) {
-                    return PopupMenuItem<String>(
-                      value: choice,
-                      child: Text(choice),
-                    );
-                  }).toList();
-                },
-              )
-            ],
-          ),
-        ),
-      ),
+    return Consumer<AppStateNotifier>(
+      builder: (BuildContext context, appState, Widget child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: appState.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          home: Track(),
+          routes: {
+            Routes.track: (context) => Track(),
+            Routes.history: (context) => History(),
+            Routes.settings: (context) => Settings(),
+            Routes.ways: (context) => Ways(),
+            Routes.signout: (context) => SignOut(),
+            Routes.report: (context) => Report(),
+          },
+        );
+      },
     );
   }
 }
